@@ -4,27 +4,45 @@
 
 HINSTANCE g_hInjMod = NULL;
 
-WCHAR path[MAX_PATH*2];
+CHAR path[MAX_PATH*2];
+WCHAR dllpath[MAX_PATH * 2];
+
+/*
+#define $$$ __asm\
+{\
+mov al, 2\
+}
+*/
 
 int main()
 {
-	
+	/*
+	__asm {
+		mov al, 2
+		mov dx, 0xD007
+		out dx, al
+	}
+	$$$
+	$$$
+	$$$
+	*/
+
 	GetProcessId((L"csgo.exe")); // endre til csgo.exe
 	//std::cout << TargetId;
 
-	GetModuleFileName(GetModuleHandle(NULL), path, sizeof(path));
-	//std::cout << path;
+	GetModuleFileName(GetModuleHandle(NULL), dllpath, sizeof(dllpath));
+	std::wstring path2(dllpath);
+	path2.erase(path2.find_last_of(L"\\")+1);
+	path2.append(L"Osiris.dll");
 
-	INJECTIONDATAA injeksjonsdata;
-	strcpy_s(injeksjonsdata.szDllPath, "C:\\Users\\mathi\\Desktop\\Osiris-master\\Osiris-master\\Release\\Osiris.dll");
-	injeksjonsdata.ProcessID = TargetId;
-	injeksjonsdata.Method = LM_NtCreateThreadEx;
-	injeksjonsdata.Mode = IM_ManualMap;
-	injeksjonsdata.Flags = INJ_ERASE_HEADER;
+	INJECTIONDATAW winjeksjonsdata;
 
-	InjectA(&injeksjonsdata);
+	wcscpy_s(winjeksjonsdata.szDllPath, path2.c_str());
+	winjeksjonsdata.ProcessID = TargetId;
+	winjeksjonsdata.Method = LM_NtCreateThreadEx;
+	winjeksjonsdata.Mode = IM_ManualMap;
+	winjeksjonsdata.Flags = INJ_ERASE_HEADER;
 
-	std::cout << injeksjonsdata.LastErrorCode;
-	Sleep(10000);
+	InjectW(&winjeksjonsdata);
 }
 

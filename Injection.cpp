@@ -33,7 +33,7 @@ DWORD __stdcall InjectA(INJECTIONDATAA* pData)
 {
 	if (!pData->szDllPath)
 		return InitErrorStruct(nullptr, ReCa<INJECTIONDATAW*>(pData), false, INJ_ERR_INVALID_FILEPATH);
-
+	
 	INJECTIONDATAW data{ 0 };
 	size_t len_out = 0;
 	size_t max_len = sizeof(data.szDllPath) / sizeof(wchar_t);
